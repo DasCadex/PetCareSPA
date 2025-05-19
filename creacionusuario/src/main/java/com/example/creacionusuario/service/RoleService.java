@@ -11,7 +11,7 @@ import com.example.creacionusuario.repository.RoleRepositoy;
 import jakarta.transaction.Transactional;
 
 @Service
-@Transactional
+@Transactional//sirve para llamar datos de la base de datos y manejarla
 public class RoleService {
 
     @Autowired

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +72,10 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(userId).orElseThrow(()->new RuntimeException("usuario no encontrado"+userId));
 
         usuarioRepository.delete(usuario);
+    }
+
+    public Usuario buscarPorId(Long id){
+        return usuarioRepository.findById(id).get();
     }
 
 

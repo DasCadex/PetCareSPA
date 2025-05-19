@@ -76,6 +76,22 @@ public class UsuarioController {
         }
     }
 
+    
+    @GetMapping("/user/{id}")
+    public ResponseEntity <?> buscarPorid(@PathVariable Long id){
+
+        try{
+            Usuario usuario = usuarioService.buscarPorId(id);
+            return ResponseEntity.ok(usuario);
+
+
+        }catch(Exception e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    
+
 
 
     
