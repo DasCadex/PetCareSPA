@@ -39,7 +39,7 @@ public class MascotasController {
 
         return mascotasservice.obtenerporid(id);
     }
-
+    
     @DeleteMapping("/{id}")
     public void eliminarMascotas(@PathVariable long id){
         mascotasservice.eliminarMascotas(id);
