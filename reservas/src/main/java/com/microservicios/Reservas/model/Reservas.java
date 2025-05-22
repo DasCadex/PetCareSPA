@@ -1,17 +1,18 @@
-package com.microservicios.Reservas.model;
+package com.microservicios.reservas.model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Table(name="reservas")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,14 +21,25 @@ public class Reservas {
 
 
     @Id
-    
-    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long reservaId;
 
-    private LocalDate fecha;
-    private LocalTime hora;
+    @Column(nullable = false )
+    private String fecha;
+
+    @Column(nullable = false )
     private String motivo; // ej: "Consulta general", "Vacunación", etc.
-    private String estado; // ej: "PENDIENTE", "CONFIRMADA", "CANCELADA", etc.
+    
+    @Column(nullable = false)
+    private Long usuarioId;
+
+    @Column(nullable = true )
     private String observaciones; // opcional
+
+    @Column(nullable = false )
+
+    private Double precio;
+
+    @Column(nullable = false )
+    private String nombrecliente;
 }

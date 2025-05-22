@@ -1,12 +1,14 @@
-package com.microservicios.Reservas.service;
+package com.microservicios.reservas.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.microservicios.Reservas.model.Reservas;
-import com.microservicios.Reservas.repository.ReservaReposiry;
+import com.microservicios.reservas.model.Reservas;
+import com.microservicios.reservas.repository.ReservaReposiry;
+import com.microservicios.reservas.webclient.UsuarioClient;
 
 @Service
 public class ReservasService {
@@ -14,11 +16,8 @@ public class ReservasService {
     @Autowired//crear una clase sin crearla
     private ReservaReposiry reservaReposiry;
 
-   public ReservasService(ReservaReposiry reservaReposiry){
-
-        this.reservaReposiry = reservaReposiry;
-
-   }
+    @Autowired
+    private UsuarioClient usuarioClient;
 
    public List<Reservas> obtenerTodas(){
 
@@ -27,9 +26,25 @@ public class ReservasService {
 
    }
 
-   public Reservas crearReserva(Reservas reserva){
-        return reservaReposiry.save(reserva);
-       // crear nueva reserva
+   public Reservas crearReserva(Reservas nuevareserva){
+
+    Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevareserva.getUsuarioId());
+        if (usuario == null || usuario.isEmpty()) {
+            throw new RuntimeException("Cliente no encontrado, no puede hacer la reserva ");
+        }
+
+        String nombre =(String ) usuario.get("nombres");
+
+        nuevareserva.setNombrecliente(nombre);
+
+        double preciofijo =150000;
+        nuevareserva.setPrecio(preciofijo);
+
+
+        return reservaReposiry.save(nuevareserva);
+
+
+        
    }
 
 
@@ -42,14 +57,10 @@ public class ReservasService {
         return reservaReposiry.findById(id).orElse(null);
         //encontrar por id, si no lo encuentra tira null
     }
+    
 
-    public List<Reservas> obtenerporestado(String estado){
-        return reservaReposiry.findByEstado(estado);
-        //para ver reservas pendiente, confirmada , en proceso , etc
-    }
+    
+    
 
-    public List<Reservas> obtenerPorEstado(String estado) {
-        return reservaReposiry.findByEstado(estado);
-        //para ver reservas pendiente, confirmada , en proceso , etc
-    }
+    
 }
