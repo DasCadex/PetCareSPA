@@ -1,8 +1,9 @@
-package com.microservicios.Reservas.controller;
+package com.microservicios.reservas.controller;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.microservicios.Reservas.model.Reservas;
-import com.microservicios.Reservas.service.ReservasService;
+import com.microservicios.reservas.model.Reservas;
+import com.microservicios.reservas.service.ReservasService;
 
 @RestController
 @RequestMapping("/api/reservas")
@@ -32,18 +33,20 @@ public class ReservasController {
 
     }
 
-    @GetMapping("/estado/{estado}")
-   public List<Reservas> obtenerPorEstado(@PathVariable String estado) {
-        return reservasService.obtenerPorEstado(estado);
-    }
 
     @PostMapping
-    public Reservas crear(@RequestBody Reservas reservas){
+    public ResponseEntity <?> crearmascota (@RequestBody Reservas reservas){
 
-        return reservasService.crearReserva(reservas);
-        // Maneja solicitudes HTTP POST a la ruta base (por ejemplo, /reservas)
-        // Crea una nueva reserva utilizando los datos recibidos en el cuerpo de la solicitud (en formato JSON)
-        // Retorna la reserva creada
+        try{
+            Reservas savedReservas = reservasService.crearReserva(reservas);
+            return ResponseEntity.status(201).body(savedReservas);
+
+        }catch(RuntimeException e){
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+
+
+    
     }
 
     @DeleteMapping("/{id}")

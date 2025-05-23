@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Table ( name="mascotas ")
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -14,13 +15,31 @@ import lombok.NoArgsConstructor;
 public class Mascotas {
 
     @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private long Id;
+    private long mascotasId;
+
+    @Column(nullable = false )
+    private Long usuarioId;
+
+   
     
-    private String nombre;
+    
+    @Column (nullable = false, length = 30)
+     private String nombre;
+
+    @Column (nullable =  false, length = 2)
     private int edad;
+    
+    @Column (nullable = false , length = 1000)
     private String raza;
+
+
+    @Column (nullable = false , length = 30)
     private String especie;
+
+    @Column(nullable = false )
+    private String nombredueno;
 
 }
