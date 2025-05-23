@@ -1,0 +1,43 @@
+reservas : 
+{
+  "fecha": "2025-05-15",
+  "motivo": "Consulta general",
+  "usuarioId": 1,
+  "observaciones": "Paciente con dolor de cabeza"
+}
+
+ingresar mascota :
+
+{
+  "usuarioId": 4,
+  "nombre": "Toby",
+  "edad": 3,
+  "raza": "Beagle",
+  "especie": "Canina"
+}
+
+ingresar una orden 
+
+{
+  "usuarioId": 1,
+  "productoId": 2,
+  "cantidad": 3
+}
+
+ingresa un producto :
+
+{
+  "stock": 100,
+  "nombre_producto": "Vacuna Antigripal",
+  "marca_producto": "PharmaLife",
+  "precio_producto": 25000
+}
+
+obtener un pago :
+
+{
+  "ordenCompraId": 1,
+  "descripcion": "Pago por compra de producto X"
+}
+
+

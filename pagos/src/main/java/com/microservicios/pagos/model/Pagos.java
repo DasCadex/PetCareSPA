@@ -13,21 +13,31 @@ import jakarta.persistence.GenerationType;
 
 @Entity
 @Data
-@Table (name = "Pagos ")
+@Table (name = "Pagos")
 @NoArgsConstructor
 @AllArgsConstructor
 
 public class Pagos {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long pagoId;
 
-    
-    private long idpagos;
     @Column(nullable = false)
-    private int monto;
+    private Double monto;
+
+
     @Column(nullable = true)
-    private String Descripcion;
+    private String descripcion;
+
+    @Column(nullable = false )
+    private String nombrecliente;
+
+    @Column(nullable = false )
+    private Long ordenCompraId;
+
+   
 
 
 
