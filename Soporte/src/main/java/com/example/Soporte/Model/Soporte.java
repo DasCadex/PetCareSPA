@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "soporte")
@@ -22,23 +21,29 @@ public class Soporte {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idSoporte;
 
     @Column(nullable = false)
-    private String nombreUsuario; 
+    private String nombreusuario; 
 
     @Column(nullable = false)
-    private String emailUsuario;  
+    private String emailusuario;  
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String mensaje;      
 
     @Column(nullable = false)
-    private LocalDateTime fechaCreacion; 
+    private String  fechaCreacion; 
 
+    @Column(nullable = false)
     private String estado;
 
+    @Column(nullable = false)
     private String tipoSolicitud; 
+    
+    
+    @Column(nullable = false )
+    private Long usuarioId;
 
 }
 

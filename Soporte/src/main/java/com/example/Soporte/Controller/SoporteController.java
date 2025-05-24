@@ -39,18 +39,5 @@ public class SoporteController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
- 
-    @PatchMapping("/{id}/estado")
-    public ResponseEntity<Soporte> actualizarEstadoSolicitud(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String nuevoEstado = body.get("estado");
-        if (nuevoEstado == null || nuevoEstado.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        try {
-            Soporte solicitudActualizada = solicitudSoporteService.actualizarEstadoSolicitud(id, nuevoEstado);
-            return new ResponseEntity<>(solicitudActualizada, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+
 }

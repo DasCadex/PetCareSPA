@@ -1,11 +1,11 @@
 package com.example.ordenecompra.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,42 +24,49 @@ public class OrdenController {
 
     @GetMapping
     public ResponseEntity<List<Orden>> mostrarOrdenes() {
-    List<Orden> lista2 = ordenService.buscarOrden();
+        List<Orden> lista2 = ordenService.buscarOrden();
 
-        if (lista2.isEmpty()){
+        if (lista2.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
         return ResponseEntity.ok(lista2);
     }
+
     @GetMapping("/total")
     public ResponseEntity<Double> obtenerTotal() {
-    Double total = ordenService.calcularTotalOrdenes();
-    return ResponseEntity.ok(total);
-}
+        Double total = ordenService.calcularTotalOrdenes();
+        return ResponseEntity.ok(total);
+    }
 
     @PostMapping
-    public ResponseEntity <?>  crearPedido(@RequestBody Orden orden){
+    public ResponseEntity<?> crearPedido(@RequestBody Orden orden) {
 
-        try{
+        try {
             Orden savedOrden = ordenService.guardarOrdenCompre(orden);
             return ResponseEntity.status(201).body(savedOrden);
 
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
 
-    
 
-    
+    @GetMapping("/{id}")
+    public ResponseEntity<Orden> obtenerOrdenPorId(@PathVariable Long id) {
 
-    
+        
+        try{
+            Orden orden =ordenService.buscarPorid(id);
+            return ResponseEntity.ok(orden);
 
- 
 
 
-
+        }catch(Exception e){
+            return ResponseEntity.notFound().build();
+        }
+   
+}
 
 
 }

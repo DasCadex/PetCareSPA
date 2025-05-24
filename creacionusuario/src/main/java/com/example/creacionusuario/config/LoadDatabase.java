@@ -37,10 +37,16 @@ public class LoadDatabase {
                     gestor.setNombre("gestor de inventario ");
                     roleRepo.save(gestor);
 
+
+                    Rol soporte=new Rol();
+                    soporte.setNombre("Soporte y administrador de sistemas");
+                    roleRepo.save(soporte);
+
                     userRepo.save(new Usuario(null,"cadex","123","fege@123","fernando","villalobo",admin));
                     userRepo.save(new Usuario(null,"gabrielex","321","dasCadez@123","gabriel","jorquera",user));
                     userRepo.save(new Usuario(null,"gestevan","567","pera@123","estevan","torres",doc));
                     userRepo.save(new Usuario(null,"DasCadex","5676","pera777@123","fortachon","gaspar",gestor));
+                    userRepo.save(new Usuario(null,"nicolas123","5676","pera777@12356","nicolas","sotomayor",soporte));
 
                     System.out.println("Datos iniciales cargados ");
 

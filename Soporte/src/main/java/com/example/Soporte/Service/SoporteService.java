@@ -2,6 +2,8 @@ package com.example.Soporte.Service;
 
 import com.example.Soporte.Model.Soporte;
 import com.example.Soporte.Repository.SoporteRepository;
+import com.example.Soporte.WebClient.UsuarioClient;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -16,12 +18,45 @@ public class SoporteService {
     @Autowired
     private SoporteRepository solicitudSoporteRepository;
 
+    @Autowired
+    private UsuarioClient usuarioClient;
+
     // Método para crear una nueva solicitud de soporte (POST)
-    public Soporte crearSolicitud(Soporte solicitud) {
-        // La fecha de creacion y el estado (Pendiente) se meten en el constructor
-        Soporte savedSolicitud = solicitudSoporteRepository.save(solicitud);    
-        return savedSolicitud;
+    public Soporte crearSolicitud(Soporte nuevasolicitud) {
+    System.out.println("Buscando usuario con ID: " + nuevasolicitud.getUsuarioId());
+
+    Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevasolicitud.getUsuarioId());
+
+    if (usuario == null || usuario.isEmpty()) {
+        throw new RuntimeException("Usuario soporte no existe");
     }
+
+    System.out.println("Usuario recibido: " + usuario);
+
+    String nombreusuario = (String) usuario.get("username");
+    if (nombreusuario == null) {
+        throw new RuntimeException("No existe un soporte con este nombre");
+    }
+
+    String correousuario = (String) usuario.get("correo");
+    if (correousuario == null) {
+        throw new RuntimeException("Correo del soporte inválido o inexistente");
+    }
+
+    Map<String, Object> rolMap = (Map<String, Object>) usuario.get("rol");
+    if (rolMap == null || !rolMap.get("nombre").toString().equalsIgnoreCase("Soporte y administrador de sistemas")) {
+    throw new RuntimeException("Acceso denegado: el usuario no tiene el rol SOPORTE");
+    }
+
+
+   
+
+    nuevasolicitud.setNombreusuario(nombreusuario);
+    nuevasolicitud.setEmailusuario(correousuario);
+
+    return solicitudSoporteRepository.save(nuevasolicitud);
+}
+
 
     // Método para obtener todas las solicitudes de soporte (GET)
     public List<Soporte> obtenerTodasLasSolicitudes() {
@@ -33,15 +68,6 @@ public class SoporteService {
         return solicitudSoporteRepository.findById(id);
     }
 
-    // Método para actualizar el estado de una solicitud (PUT)
-    public Soporte actualizarEstadoSolicitud(Long id, String nuevoEstado) {
-        return solicitudSoporteRepository.findById(id)
-                .map(solicitudExistente -> {
-                    solicitudExistente.setEstado(nuevoEstado);
-                    return solicitudSoporteRepository.save(solicitudExistente);
-                })
-                .orElseThrow(() -> new RuntimeException("Solicitud de soporte no encontrada con ID: " + id));
-    }
-
+    
  
 }

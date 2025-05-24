@@ -33,6 +33,10 @@ public class OrdenService {
         return ordenRepository.findAll();
     }
 
+    public Orden buscarPorid(Long id){
+        return  ordenRepository.findById(id).get();
+    }
+
     public Orden guardarOrdenCompre(Orden nuevaOrden) {
 
         Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevaOrden.getUsuarioId());
