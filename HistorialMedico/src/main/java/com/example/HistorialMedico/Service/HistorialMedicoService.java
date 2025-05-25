@@ -2,9 +2,14 @@ package com.example.HistorialMedico.Service;
 
 import com.example.HistorialMedico.Model.HistorialMedico;
 import com.example.HistorialMedico.Repository.HistorialMedicoRepository;
+import com.example.HistorialMedico.WebClient.MascotasClient;
+import com.example.HistorialMedico.WebClient.UsuarioClient;
+
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
@@ -14,26 +19,57 @@ import jakarta.transaction.Transactional;
 
 public class HistorialMedicoService {
 
-    private final HistorialMedicoRepository historialMedicoRepository;
+    
 
     @Autowired
-    public HistorialMedicoService(HistorialMedicoRepository historialMedicoRepository) {
-        this.historialMedicoRepository = historialMedicoRepository;
-    }
+    private HistorialMedicoRepository historialMedicoRepository;
 
-    public HistorialMedico crearHistorialMedico(HistorialMedico historial) {
+    @Autowired
+    private MascotasClient mascotasClient;
 
-        if (historial.getMascotaid() == null) {
-            throw new IllegalArgumentException("El ID de la mascota es obligatorio");
-        }
-        if (historial.getFechaconsulta() == null || historial.getFechaconsulta().trim().isEmpty()) {
-            throw new IllegalArgumentException("La fecha de consulta es obligatoria.");
-        }
-        if (historial.getDiagnostico() == null || historial.getDiagnostico().trim().isEmpty()) {
-            throw new IllegalArgumentException("El diagnostico es obligatorio");
-        }
-        return historialMedicoRepository.save(historial);
+    @Autowired
+    private UsuarioClient usuarioClient;
+    
+    public HistorialMedico crearHistorialMedico(HistorialMedico nuevohistorial) {
 
+        Map<String, Object> mascota= mascotasClient.getMascotasById(nuevohistorial.getMascotaid());
+        if (mascota == null || mascota.isEmpty()){
+            throw new RuntimeException("Mascota no encontra o inexistente");
+        }
+
+        Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevohistorial.getUsuarioid());
+        if(usuario==null || usuario.isEmpty()){
+            throw new RuntimeException("veterinario no existe");
+        }
+
+        Map<String, Object> rolMap = (Map<String, Object>) usuario.get("rol");
+        if (rolMap == null || !rolMap.get("nombre").toString().equalsIgnoreCase("Veterinario")) {
+        throw new RuntimeException("Acceso denegado: el usuario no tiene el rol Veterinario");
+        }
+        String nombres  = (String) usuario.get("nombres");
+        if (nombres==null){
+            throw new RuntimeException("nombre del veterinario no encontrado");
+
+        }
+
+        nuevohistorial.setNombreveterinario(nombres);
+
+        String nombrems = (String ) mascota.get("nombre");
+        if(nombrems== null){
+            throw new RuntimeException("Mascota sin nombre o inexistente ");
+        }
+        nuevohistorial.setNombremascota(nombrems);
+
+
+
+
+        return historialMedicoRepository.save(nuevohistorial);
+
+
+
+
+
+       
     }
 
     public List<HistorialMedico> obtenerTodosLosHistoriales() {
@@ -46,30 +82,9 @@ public class HistorialMedicoService {
 
     }
 
-    public List<HistorialMedico> obtenerHistorialesPorMascotaId(Long mascotaId) { 
-        return historialMedicoRepository.findByMascotaid(mascotaId);
-    }
+    
 
-    public Optional<HistorialMedico> actualizarHistorialMedico(Long id, HistorialMedico historialActualizado) {
-
-        return historialMedicoRepository.findById(id).map(historialExistente -> {
-
-            if (historialActualizado.getFechaconsulta() != null && !historialActualizado.getFechaconsulta().trim().isEmpty()) {
-                historialExistente.setFechaconsulta(historialActualizado.getFechaconsulta());
-            }
-            
-            if (historialActualizado.getDiagnostico() != null && !historialActualizado.getDiagnostico().trim().isEmpty()) {
-                historialExistente.setDiagnostico(historialActualizado.getDiagnostico());
-            }
-
-            if (historialActualizado.getTratamiento() != null) {
-                historialExistente.setTratamiento(historialActualizado.getTratamiento());
-            }
-            return historialMedicoRepository.save(historialExistente);
-
-            
-        });
-   } 
+   
    
    public boolean eliminarHistorialMedico(Long id) {
     if (historialMedicoRepository.existsById(id)) {

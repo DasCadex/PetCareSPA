@@ -23,12 +23,15 @@ public class HistorialMedicoController {
 
     @PostMapping
     public ResponseEntity<?> crearHistorialMedico(@RequestBody HistorialMedico historial) {
-        try {
-            HistorialMedico nuevoHistorial = historialMedicoService.crearHistorialMedico(historial);
-            return new ResponseEntity<>(nuevoHistorial, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        try{
+             HistorialMedico savedHistorial = historialMedicoService.crearHistorialMedico(historial);
+            return ResponseEntity.status(201).body(savedHistorial);
+
+        }catch(RuntimeException e){
+            return ResponseEntity.status(404).body(e.getMessage());
         }
+        
+  
 
         }
 
@@ -45,25 +48,8 @@ public class HistorialMedicoController {
                          .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
 
-        @GetMapping("/mascota/{mascotaId}")
-        public ResponseEntity<List<HistorialMedico>> obtenerHistorialesPorMascotaId(@PathVariable Long mascotaId) {
-            List<HistorialMedico> historiales = historialMedicoService.obtenerHistorialesPorMascotaId(mascotaId); // <-- ¡Llamada CORRECTA!
-            if (historiales.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(historiales, HttpStatus.OK);
-        }
 
-        @PutMapping("/{idhistorial}")
-        public ResponseEntity<?> actualizarHistorialMedico(@PathVariable Long idhistorial, @RequestBody HistorialMedico historial) {
-            try {
-                Optional<HistorialMedico> actualizado = historialMedicoService.actualizarHistorialMedico(idhistorial, historial);
-                return actualizado.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
-        }
+        
 
         @DeleteMapping("/{idhistorial}") // <-- Ajustado la URL para el ID del historial
         public ResponseEntity<Void> eliminarHistorialMedico(@PathVariable Long idhistorial) {

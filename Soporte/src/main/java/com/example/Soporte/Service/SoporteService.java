@@ -67,6 +67,15 @@ public class SoporteService {
     public Optional<Soporte> obtenerSolicitudPorId(Long id) {
         return solicitudSoporteRepository.findById(id);
     }
+    public boolean eliminarSolicitud(Long id) {
+    if (solicitudSoporteRepository.existsById(id)) {
+        solicitudSoporteRepository.deleteById(id);
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
     
  

@@ -39,5 +39,18 @@ public class SoporteController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarSolicitud(@PathVariable Long id) {
+    boolean eliminada = solicitudSoporteService.eliminarSolicitud(id);
+    if (eliminada) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}
+
+
+    
+
 
 }

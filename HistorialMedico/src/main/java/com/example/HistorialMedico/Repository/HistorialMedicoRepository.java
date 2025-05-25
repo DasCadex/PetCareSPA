@@ -9,6 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HistorialMedicoRepository extends JpaRepository<HistorialMedico, Long>{
-    List<HistorialMedico> findByMascotaid(Long mascotaid);
-
+    
 }

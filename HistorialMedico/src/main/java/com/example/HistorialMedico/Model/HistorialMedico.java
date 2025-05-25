@@ -24,11 +24,21 @@ public class HistorialMedico {
     @Column(nullable = false)
     private String fechaconsulta;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String diagnostico;
 
-    @Lob
+    @Column(nullable = false)
     private String tratamiento;
+
+    @Column(nullable = false)
+    private Long usuarioid;
+
+
+    @Column(nullable = false)
+    private String nombreveterinario;
+
+    @Column(nullable = false)
+    private String nombremascota;
 
     
 
