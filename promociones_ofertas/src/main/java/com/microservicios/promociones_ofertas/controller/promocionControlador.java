@@ -61,7 +61,7 @@ public class promocionControlador {
             
             promocion promocion = promocionService.buscarPromocionporid(id);
             
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(promocion);
         } catch (Exception e) {
 
             return ResponseEntity.notFound().build();

@@ -44,6 +44,14 @@ public class Orden {
     @Column(nullable = false )
     private Integer cantidad;
 
+    @Column(nullable = true )
+    private Long promocionid;
+
+    @Column(nullable = true )
+    private String promocionif;
+
+
+
 
 
 

@@ -19,10 +19,10 @@ public class promocion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private Long id;
+    private Long idpromocion;
 
-    private String Titulo;
-    private String descripcio;
+    private String titulo;
+    private String descripcion;
 
     
 

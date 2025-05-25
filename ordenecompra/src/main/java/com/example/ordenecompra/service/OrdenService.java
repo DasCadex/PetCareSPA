@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.ordenecompra.model.Orden;
 import com.example.ordenecompra.repository.OrdenRepository;
 import com.example.ordenecompra.webclient.ProductoClient;
+import com.example.ordenecompra.webclient.PromocionClient;
 import com.example.ordenecompra.webclient.UsuarioClient;
 
 import jakarta.transaction.Transactional;
@@ -28,6 +29,10 @@ public class OrdenService {
     @Autowired
     private ProductoClient productoClient;
 
+    @Autowired
+    private PromocionClient promocionClient;
+
+
     
     public List<Orden> buscarOrden() {
         return ordenRepository.findAll();
@@ -38,6 +43,11 @@ public class OrdenService {
     }
 
     public Orden guardarOrdenCompre(Orden nuevaOrden) {
+
+        Map<String, Object> promocion = promocionClient.getPromocionById(nuevaOrden.getPromocionid());
+        if(promocion ==null || promocion.isEmpty() ){
+            throw new RuntimeException("promocion no encontrada ");
+        }
 
         Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevaOrden.getUsuarioId());
         if (usuario == null || usuario.isEmpty()) {
@@ -50,6 +60,14 @@ public class OrdenService {
         if (producto == null || producto.isEmpty()) {
             throw new RuntimeException("Producto no encontrado, no se puede crear la orden de compra");
         }
+
+        System.out.println(promocion);
+
+        String promocionif =(String) promocion.get("descripcion");
+        if (promocionif== null){
+            throw new RuntimeException("promocion no en vigencian");
+        }
+        nuevaOrden.setPromocionif(promocionif);
 
 
         String nombreProducto = (String) producto.get("nombre_producto"); //le damos la key pára saber que datos quiere sacar 
