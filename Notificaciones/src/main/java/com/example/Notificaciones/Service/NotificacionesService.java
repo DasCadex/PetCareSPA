@@ -2,10 +2,13 @@ package com.example.Notificaciones.Service;
 
 import com.example.Notificaciones.Model.Notificaciones;
 import com.example.Notificaciones.Repository.NotificacionesRepository;
+import com.example.Notificaciones.WebClient.PagosClient;
+import com.example.Notificaciones.WebClient.UsuarioClient;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
-
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,28 +16,43 @@ import java.util.Optional;
 @Transactional
 public class NotificacionesService {
 
-    private final NotificacionesRepository notificacionesRepository;
+    @Autowired
+    private NotificacionesRepository notificacionesRepository;
 
     @Autowired
-    public NotificacionesService(NotificacionesRepository notificacionesRepository) {
-        this.notificacionesRepository = notificacionesRepository;
-    }
+    private UsuarioClient usuarioClient;
+
+    @Autowired
+    private PagosClient pagosClient;
+
+  
+    
 
     
-    public Notificaciones crearNotificacion(Notificaciones notificaciones) {
-        
-        if (notificaciones.getIdpago() == null) { 
-            throw new IllegalArgumentException("El ID de pago es obligatorio.");
-        }
-        if (notificaciones.getMensaje() == null || notificaciones.getMensaje().trim().isEmpty()) {
-            throw new IllegalArgumentException("El mensaje de la notificación es obligatorio.");
-        }
-        
-        if (notificaciones.getFechaCreacion() == null || notificaciones.getFechaCreacion().trim().isEmpty()) {
-            throw new IllegalArgumentException("La fecha de creación es obligatoria y debe ser proporcionada.");
+    public Notificaciones crearNotificacion(Notificaciones nuevanotificaciones) {
+
+        Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevanotificaciones.getIdusuario());
+        if (usuario == null || usuario.isEmpty()) {
+            throw new RuntimeException("Cliente no encontrado, no se puede crear la orden de compra");
         }
 
-        return notificacionesRepository.save(notificaciones);
+        Map<String, Object>  pagos = pagosClient.getPagosById(nuevanotificaciones.getIdpago());
+          if (pagos== null || pagos.isEmpty()) {
+            throw new RuntimeException("pago no encontrado ");
+        }
+
+
+        String nombreadmin= (String ) usuario.get("nombres");
+        if (nombreadmin==null) {
+            throw new RuntimeException("Nombre no encontrado");
+            
+        }
+
+        nuevanotificaciones.setNombreAdmin(nombreadmin);
+
+        
+  
+        return notificacionesRepository.save(nuevanotificaciones);
     }
 
     
@@ -48,22 +66,6 @@ public class NotificacionesService {
     }
 
     
-    public List<Notificaciones> obtenerNotificacionesNoLeidas() {
-        return notificacionesRepository.findByLeidaFalse();
-    }
-
-    
-    public List<Notificaciones> obtenerNotificacionesPorIdPago(Long idpago) {
-        return notificacionesRepository.findByIdpago(idpago);
-    }
-
-    
-    public Optional<Notificaciones> marcarComoLeida(Long idnotificacion) {
-        return notificacionesRepository.findById(idnotificacion).map(notificacion -> {
-            notificacion.setLeida(true);
-            return notificacionesRepository.save(notificacion);
-        });
-    }
 
    
     public boolean eliminarNotificacion(Long idnotificacion) {

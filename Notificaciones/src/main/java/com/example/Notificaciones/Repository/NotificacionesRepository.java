@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NotificacionesRepository extends JpaRepository<Notificaciones, Long> {
-    List<Notificaciones> findByLeidaFalse(); 
-    List<Notificaciones> findByIdpago(Long idpago);
 
 }

@@ -14,12 +14,10 @@ import java.util.Optional;
 @RequestMapping("/api/notificaciones") 
 public class NotificacionesController {
 
-    private final NotificacionesService notificacionesService; 
 
     @Autowired
-    public NotificacionesController(NotificacionesService notificacionesService) { 
-        this.notificacionesService = notificacionesService;
-    }
+    private NotificacionesService notificacionesService; 
+
 
     
     @PostMapping
@@ -47,33 +45,6 @@ public class NotificacionesController {
                            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    
-    @GetMapping("/no-leidas")
-    public ResponseEntity<List<Notificaciones>> obtenerNotificacionesNoLeidas() { 
-        List<Notificaciones> notificaciones = notificacionesService.obtenerNotificacionesNoLeidas(); 
-        if (notificaciones.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(notificaciones, HttpStatus.OK);
-    }
-
-   
-    @GetMapping("/pago/{idpago}")
-    public ResponseEntity<List<Notificaciones>> obtenerNotificacionesPorIdPago(@PathVariable Long idpago) { 
-        List<Notificaciones> notificaciones = notificacionesService.obtenerNotificacionesPorIdPago(idpago); 
-        if (notificaciones.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(notificaciones, HttpStatus.OK);
-    }
-
-    
-    @PutMapping("/{idnotificacion}/marcar-leida")
-    public ResponseEntity<Notificaciones> marcarNotificacionComoLeida(@PathVariable Long idnotificacion) { 
-        Optional<Notificaciones> notificacionActualizada = notificacionesService.marcarComoLeida(idnotificacion); 
-        return notificacionActualizada.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                                      .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 
     
     @DeleteMapping("/{idnotificacion}")

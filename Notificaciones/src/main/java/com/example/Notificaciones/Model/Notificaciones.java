@@ -26,7 +26,12 @@ public class Notificaciones {
     @Column(nullable = false)
     private String fechaCreacion; 
 
-    @Column(nullable = false)
-    private boolean leida = false; 
+    @Column(nullable = false )
+    private Long idusuario;
+
+
+    @Column(nullable = false )
+    private String nombreAdmin;
+
 
 }
