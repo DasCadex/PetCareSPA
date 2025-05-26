@@ -20,7 +20,6 @@ public class Rating {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long idopinion;
 
     @Column(nullable = false)
@@ -31,6 +30,10 @@ public class Rating {
 
     @Column(nullable = false)
     private Integer rating;
+
+
+    @Column(nullable = false)
+    private String nombreproducto;
 
     
 

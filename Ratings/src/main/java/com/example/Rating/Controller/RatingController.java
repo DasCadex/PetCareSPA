@@ -14,56 +14,56 @@ import java.util.Optional;
 @RequestMapping("/api/ratings")
 public class RatingController {
 
-    private final RatingService ratingService;
+
 
     @Autowired
-    public RatingController(RatingService ratingService) {
-        this.ratingService = ratingService;
-    }
-    // {
-    //     "idusuario": 1,
-    //     "idproducto": 101,
-    //     "rating": 5,
+    private RatingService ratingService;
 
-    @PostMapping
-    public ResponseEntity<?> crearRating(@RequestBody Rating rating) {
-        try {
-            Rating nuevoRating = ratingService.guardarRating(rating);
-            return new ResponseEntity<>(nuevoRating, HttpStatus.CREATED);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-            }
-
-
-
+      @PostMapping
+    public ResponseEntity<Rating> crearRating(@RequestBody Rating rating) {
+        Rating nuevo = ratingService.guardarRating(rating);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
     }
 
-
-
+    // ✅ GET - Obtener todos los ratings
     @GetMapping
-    public ResponseEntity <List<Rating>> obtenerTodosLosRatings() {
-        List<Rating> ratings = ratingService.obtenerTodosLosRatings();
-        return new ResponseEntity<>(ratings, HttpStatus.OK);
+    public ResponseEntity<List<Rating>> obtenerTodosLosRatings() {
+        return new ResponseEntity<>(ratingService.obtenerTodosLosRatings(), HttpStatus.OK);
     }
 
-    
-
+    // ✅ GET - Obtener rating por ID
     @GetMapping("/{id}")
     public ResponseEntity<Rating> obtenerRatingPorId(@PathVariable Long id) {
-        Optional<Rating> rating = ratingService.obtenerRatingPorId(id);
-        return rating.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                     .orElseGet(()-> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-
+        return ratingService.obtenerRatingPorId(id)
+                .map(rating -> new ResponseEntity<>(rating, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // ✅ DELETE - Eliminar rating por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarRating(@PathVariable Long id) {
+        try {
+            ratingService.eliminarRaiting(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Rating> actualizarParcialRating(@PathVariable Long id, @RequestBody Rating cambios) {
+    return ratingService.obtenerRatingPorId(id).map(ratingExistente -> {
+        if (cambios.getRating() != null) {
+            ratingExistente.setRating(cambios.getRating());
+        }
+        Rating actualizado = ratingService.guardarRating(ratingExistente);
+        return new ResponseEntity<>(actualizado, HttpStatus.OK);
+    }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+}
 
 
-    
 
-
-
-
+  
 
 
 }

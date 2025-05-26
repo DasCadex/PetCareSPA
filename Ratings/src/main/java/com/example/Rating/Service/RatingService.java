@@ -3,11 +3,15 @@ package com.example.Rating.Service;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.Rating.Model.Rating;
 import com.example.Rating.Repository.RatingRepository;
+import com.example.Rating.WebClient.ProductoClient;
+import com.example.Rating.WebClient.UsuarioClient;
 
 import jakarta.transaction.Transactional;
 
@@ -16,47 +20,48 @@ import jakarta.transaction.Transactional;
 public class RatingService {
 
     @Autowired
+    private  RatingRepository ratingRepository;
 
-    private final RatingRepository ratingRepository;
-    private final ProductoClient productoClient;//LO DEL PRODUCTO BRO
+    @Autowired
+    private ProductoClient productoClient;
 
-    public RatingService(RatingRepository ratingRepository) {
-        this.ratingRepository = ratingRepository;
-        this.productoClient = productoClient; //AQUI IRIA LO DEL PRODUCTO
-    }
+    @Autowired
+    private UsuarioClient usuarioClient;
 
-    public Rating guardarRating(Rating rating){
-    if (rating.getRating() == null || rating.getRating() < 1 || rating.getRating() > 5) {
-        throw new IllegalArgumentException("La Calificacion debe ser un numero entre 1 y 5");    
-        
-    }
-    if (rating.getIdusuario() == null) {
-        throw new IllegalArgumentException("El ID del usuario no puede ser nulo.");
+    public Rating guardarRating(Rating nuevorating){
 
-    }
-    if (rating.getIdproducto() == null){
-        throw new IllegalArgumentException("El ID del Producto no puede ser nulo.");
+        Map<String, Object> usuarioraiting= usuarioClient.getUsuarioById(nuevorating.getIdusuario());
 
-    }
-
-    try{
-
-        Map<String, Object> productoDetails = productoClient.getProductoById(rating.getIdproducto());
-        if (productoDetails == null || productoDetails.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El producto con ID " + rating.getIdproducto() + " no fue encontrado en el servicio de productos.");
+        if( usuarioraiting== null || usuarioraiting.isEmpty()){
+            throw new RuntimeException("Usuario no encontrado o inexistente");
         }
-        System.out.println("Producto validado: " + productoDetails.get("nombre"));
-    }catch(
-        
-    RuntimeException e)
-    {
 
-        throw new IllegalArgumentException("No se pudo validar el producto: " + e.getMessage(), e);
-    }
+        Map<String, Object> productoraiting = productoClient.getProductoById(nuevorating.getIdproducto());
 
-    return ratingRepository.save(rating);
+        if (productoraiting== null  || productoraiting.isEmpty()){
+            throw new RuntimeException("producto no encontrado para calificar ");
+        }
+
+
+        String nomproducto = (String) productoraiting.get("nombre_producto");
+
+        if (nomproducto == null){
+            throw new RuntimeException("Nombre del producto no encontrado ");
+        }
+
+        nuevorating.setNombreproducto(nomproducto);
+
+
+
+
+
+        return ratingRepository.save(nuevorating);
+
     }
+    
+
+ 
+   
 
     
 
@@ -67,6 +72,14 @@ public class RatingService {
 
     public Optional<Rating> obtenerRatingPorId(Long id) {
         return ratingRepository.findById(id);
+    }
+
+    public void eliminarRaiting(Long id){
+
+        Rating rating= ratingRepository.findById(id).orElseThrow(() -> new RuntimeException("comentario no encontrado"));
+        
+        ratingRepository.delete(rating);
+
     }
 
 }
