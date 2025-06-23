@@ -33,7 +33,7 @@ public class NotificacionesService {
 
         Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevanotificaciones.getIdusuario());
         if (usuario == null || usuario.isEmpty()) {
-            throw new RuntimeException("Cliente no encontrado, no se puede crear la orden de compra");
+            throw new RuntimeException("Cliente no encontrado no se puede crear la orden de compra");
         }
 
         Map<String, Object>  pagos = pagosClient.getPagosById(nuevanotificaciones.getIdpago());

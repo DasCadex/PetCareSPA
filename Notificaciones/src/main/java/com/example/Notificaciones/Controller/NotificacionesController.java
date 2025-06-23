@@ -1,7 +1,14 @@
 package com.example.Notificaciones.Controller;
 
 import com.example.Notificaciones.Model.Notificaciones; 
-import com.example.Notificaciones.Service.NotificacionesService; 
+import com.example.Notificaciones.Service.NotificacionesService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +24,12 @@ public class NotificacionesController {
 
     @Autowired
     private NotificacionesService notificacionesService; 
+
+    @Operation(summary = "Obtiene  la lista de todas las Notifiaciones")
+    @ApiResponses(value ={
+        @ApiResponse(responseCode = "200",description = "Listas de Notifiaciones encontrada con exito",
+        content = @Content(schema = @Schema(implementation = Notificaciones.class)))
+    })
 
 
     
