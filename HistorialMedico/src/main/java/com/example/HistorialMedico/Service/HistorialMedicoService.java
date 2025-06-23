@@ -95,5 +95,18 @@ public class HistorialMedicoService {
     }
 
 
+    public List<HistorialMedico> ObtenerSolicitudesPorUsuario(Long usuarioid){
+        return historialMedicoRepository.findByUsuarioid(usuarioid);
+
+    
+    
+    }
+
+
+    
+
+
+
+
     
 }
