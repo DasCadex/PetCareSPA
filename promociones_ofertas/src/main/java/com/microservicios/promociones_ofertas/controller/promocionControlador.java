@@ -2,6 +2,8 @@ package com.microservicios.promociones_ofertas.controller;
 
 import java.util.List;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.microservicios.promociones_ofertas.model.promocion;
 import com.microservicios.promociones_ofertas.service.PromocionService;
 
-
-
 @RestController
 @RequestMapping("/api/promociones")
 @Validated
@@ -33,11 +33,11 @@ public class promocionControlador {
 
     @GetMapping
 
-    public ResponseEntity <List <promocion>> listaProducto(){
+    public ResponseEntity<List<promocion>> listaProducto() {
 
-        List <promocion> lista2=promocionService.buscartodasPromociones();
+        List<promocion> lista2 = promocionService.buscartodasPromociones();
 
-        if(lista2.isEmpty()){
+        if (lista2.isEmpty()) {
             return ResponseEntity.noContent().build();
 
         }
@@ -46,21 +46,21 @@ public class promocionControlador {
     }
 
     @PostMapping
-    
-    public ResponseEntity <promocion> guardarPromocion (@Validated @RequestBody promocion promocion){
 
-        promocion prom= promocionService.agregarPromocion(promocion);
+    public ResponseEntity<promocion> guardarPromocion(@Validated @RequestBody promocion promocion) {
+
+        promocion prom = promocionService.agregarPromocion(promocion);
         return ResponseEntity.status(HttpStatus.CREATED).body(prom);
 
-    } 
+    }
 
-    @GetMapping ("/{id}")
-    public ResponseEntity <?> buscarPromocionporid(@PathVariable long id){
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPromocionporid(@PathVariable long id) {
 
         try {
-            
+
             promocion promocion = promocionService.buscarPromocionporid(id);
-            
+
             return ResponseEntity.ok(promocion);
         } catch (Exception e) {
 
@@ -69,6 +69,38 @@ public class promocionControlador {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<promocion> actualizarPagosPorId(@PathVariable Long id, @RequestBody promocion pro) {
+        try {
+            // Buscamos si existe
+            promocion promomod = promocionService.buscarPromocionporid(id);
 
+            // Modificamos sus atributos
+
+            promomod.setIdpromocion(id);
+            promomod.setTitulo(pro.getTitulo());
+            promomod.setDescripcion(pro.getDescripcion());
+
+            // Guardamos en la BD
+            promocionService.agregarPromocion(promomod);
+            return ResponseEntity.ok(promomod);
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+      @DeleteMapping ("/{id}")
+    public  ResponseEntity <?>  eliminarPromocion(@PathVariable Long id){
+
+        try{
+            promocion pro = promocionService.buscarPromocionporid(id);
+            promocionService.eliminarpromocion(id);
+            return ResponseEntity.ok("Promocion  Eliminado Correctamente");
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Promocion Inexistente");
+        }
+    }
 
 }
