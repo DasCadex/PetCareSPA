@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.productos.model.Producto;
 import com.example.productos.service.ProductoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -30,6 +35,13 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Operation(summary = "Obtiene  la lista de todos los productos")
+    @ApiResponses(value ={
+        @ApiResponse(responseCode = "200",description = "Listas de Productos encontrada con exito",
+        content = @Content(schema = @Schema(implementation = Producto.class)))
+    })
+
 
 
     @GetMapping
@@ -57,6 +69,7 @@ public class ProductoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pac);
     }
 
+     
     @GetMapping("/{id}")
     public ResponseEntity <?> buscarPorId(@PathVariable Long id ){
 
@@ -86,7 +99,7 @@ public class ProductoController {
         }
     }
 
-    @PutMapping({"/id"})
+    @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProductoPorId(@PathVariable Long id, @RequestBody Producto pro) {
     try {
         // Buscamos si existe
@@ -107,14 +120,5 @@ public class ProductoController {
         return ResponseEntity.notFound().build();
     }
 }
-
-   
-
-
-
-
-
-
-
-
+  
 }
