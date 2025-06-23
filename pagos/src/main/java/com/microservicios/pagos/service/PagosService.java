@@ -10,7 +10,8 @@ import com.microservicios.pagos.model.Pagos;
 import com.microservicios.pagos.repository.RepositoryPagos;
 import com.microservicios.pagos.webclient.OrdenClient;
 
-import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional;// Asegura que los metodos de esta clase se ejecuten dentro de una transaccion.
+// Esto es útil para operaciones que involucran múltiples pasos en la base de datos.
 
 @Service
 @Transactional
@@ -43,14 +44,14 @@ public class PagosService {
             monto = ((Number) montoObj).doubleValue();
         }
         if (monto == null) {
-            throw new RuntimeException("El monto no tiene cantidad o es inválido");
+            throw new RuntimeException("El monto no tiene cantidad o es invalido");
         }
         nuevopago.setMonto(monto);
 
         Object nombreObj = orden.get("nombres");
         String nombrecliente = (nombreObj != null) ? nombreObj.toString() : null;
         if (nombrecliente == null) {
-            throw new RuntimeException("El producto no contiene un campo 'nombres'");
+            throw new RuntimeException("El producto no contiene un campo nombres");
         }
         nuevopago.setNombrecliente(nombrecliente);
 
