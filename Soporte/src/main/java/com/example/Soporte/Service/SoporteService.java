@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional 
+@Transactional
 public class SoporteService {
 
     @Autowired
@@ -23,40 +23,37 @@ public class SoporteService {
 
     // Método para crear una nueva solicitud de soporte (POST)
     public Soporte crearSolicitud(Soporte nuevasolicitud) {
-    System.out.println("Buscando usuario con ID: " + nuevasolicitud.getUsuarioId());
+        System.out.println("Buscando usuario con ID: " + nuevasolicitud.getUsuarioId());
 
-    Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevasolicitud.getUsuarioId());
+        Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevasolicitud.getUsuarioId());
 
-    if (usuario == null || usuario.isEmpty()) {
-        throw new RuntimeException("Usuario soporte no existe");
+        if (usuario == null || usuario.isEmpty()) {
+            throw new RuntimeException("Usuario soporte no existe");
+        }
+
+        System.out.println("Usuario recibido: " + usuario);
+
+        String nombreusuario = (String) usuario.get("username");
+        if (nombreusuario == null) {
+            throw new RuntimeException("No existe un soporte con este nombre");
+        }
+
+        String correousuario = (String) usuario.get("correo");
+        if (correousuario == null) {
+            throw new RuntimeException("Correo del soporte inválido o inexistente");
+        }
+
+        Map<String, Object> rolMap = (Map<String, Object>) usuario.get("rol");
+        if (rolMap == null
+                || !rolMap.get("nombre").toString().equalsIgnoreCase("Soporte y administrador de sistemas")) {
+            throw new RuntimeException("Acceso denegado: el usuario no tiene el rol SOPORTE");
+        }
+
+        nuevasolicitud.setNombreusuario(nombreusuario);
+        nuevasolicitud.setEmailusuario(correousuario);
+
+        return solicitudSoporteRepository.save(nuevasolicitud);
     }
-
-    System.out.println("Usuario recibido: " + usuario);
-
-    String nombreusuario = (String) usuario.get("username");
-    if (nombreusuario == null) {
-        throw new RuntimeException("No existe un soporte con este nombre");
-    }
-
-    String correousuario = (String) usuario.get("correo");
-    if (correousuario == null) {
-        throw new RuntimeException("Correo del soporte inválido o inexistente");
-    }
-
-    Map<String, Object> rolMap = (Map<String, Object>) usuario.get("rol");
-    if (rolMap == null || !rolMap.get("nombre").toString().equalsIgnoreCase("Soporte y administrador de sistemas")) {
-    throw new RuntimeException("Acceso denegado: el usuario no tiene el rol SOPORTE");
-    }
-
-
-   
-
-    nuevasolicitud.setNombreusuario(nombreusuario);
-    nuevasolicitud.setEmailusuario(correousuario);
-
-    return solicitudSoporteRepository.save(nuevasolicitud);
-}
-
 
     // Método para obtener todas las solicitudes de soporte (GET)
     public List<Soporte> obtenerTodasLasSolicitudes() {
@@ -67,16 +64,19 @@ public class SoporteService {
     public Optional<Soporte> obtenerSolicitudPorId(Long id) {
         return solicitudSoporteRepository.findById(id);
     }
+
     public boolean eliminarSolicitud(Long id) {
-    if (solicitudSoporteRepository.existsById(id)) {
-        solicitudSoporteRepository.deleteById(id);
-        return true;
-    } else {
-        return false;
+        if (solicitudSoporteRepository.existsById(id)) {
+            solicitudSoporteRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+
     }
-}
 
+    public List<Soporte> obtenerSolicitudesPorUsuario(Long usuarioId) {
+        return solicitudSoporteRepository.findByUsuarioId(usuarioId);
+    }
 
-    
- 
 }
