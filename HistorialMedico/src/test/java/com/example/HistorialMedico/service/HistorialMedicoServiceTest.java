@@ -58,8 +58,8 @@ public class HistorialMedicoServiceTest {
         HistorialMedico resultado = historialMedicoService.crearHistorialMedico(historial);
 
         // Verificar
-        assertEquals("Firulais", resultado.getNombremascota());
+        assertEquals("ELPEPE", resultado.getNombremascota());
         assertEquals("Dr. Hugo", resultado.getNombreveterinario());
-        
+
     }
 }

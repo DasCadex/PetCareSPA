@@ -35,7 +35,7 @@ public class HistorialMedicoControllerTest {
 
     @Test
 
-    void obtenerTodosLosHistoriales_debeRetornar200() throws Exception {
+    void obtenerTodosLosHistoriales() throws Exception {
         List<HistorialMedico> lista = Arrays.asList(new HistorialMedico());
         when(historialService.obtenerTodosLosHistoriales()).thenReturn(lista);
 
@@ -47,7 +47,7 @@ public class HistorialMedicoControllerTest {
 
     @Test
 
-    void obtenerHistorialPorId_existente() throws Exception {
+    void obtenerHistorialPorId() throws Exception {
         HistorialMedico historial = new HistorialMedico();
         historial.setIdhistorial(1L);
 

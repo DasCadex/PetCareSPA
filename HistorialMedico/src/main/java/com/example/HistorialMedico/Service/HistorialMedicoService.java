@@ -14,6 +14,12 @@ import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
+
+
+/**
+ * Servicio que gestiona la lógica de negocio relacionada con los historiales médicos
+ * de mascotas, incluyendo validaciones con servicios externos de mascotas y usuarios.
+ */
 @Service
 @Transactional
 
@@ -30,6 +36,16 @@ public class HistorialMedicoService {
     @Autowired
     private UsuarioClient usuarioClient;
     
+
+    /**
+     * Crea un nuevo historial médico validando la existencia de la mascota y del veterinario.
+     * También verifica que el usuario tenga el rol de "Veterinario".
+     *
+     * @param nuevohistorial Objeto {@link HistorialMedico} a guardar.
+     * @return El historial médico guardado.
+     * @throws RuntimeException Si la mascota o el usuario no existen, o no cumple con los requisitos.
+     */
+
     public HistorialMedico crearHistorialMedico(HistorialMedico nuevohistorial) {
 
         Map<String, Object> mascota= mascotasClient.getMascotasById(nuevohistorial.getMascotaid());
@@ -72,20 +88,36 @@ public class HistorialMedicoService {
        
     }
 
+
+    /**
+     * Obtiene todos los historiales médicos almacenados en la base de datos.
+     *
+     * @return Lista de historiales médicos.
+     */
     public List<HistorialMedico> obtenerTodosLosHistoriales() {
         return historialMedicoRepository.findAll();
 
     }
 
+
+    /**
+     * Obtiene un historial médico específico por su ID.
+     *
+     * @param id ID del historial.
+     * @return {@link Optional} con el historial si existe, o vacío si no se encuentra.
+    */
     public Optional<HistorialMedico> obtenerHistorialMedicoPorId(Long id) {
         return historialMedicoRepository.findById(id);
 
     }
 
     
-
-   
-   
+   /**
+     * Elimina un historial médico por su ID, si existe.
+     *
+     * @param id ID del historial a eliminar.
+     * @return {@code true} si fue eliminado, {@code false} si no existe.
+    */
    public boolean eliminarHistorialMedico(Long id) {
     if (historialMedicoRepository.existsById(id)) {
         historialMedicoRepository.deleteById(id);
@@ -95,18 +127,18 @@ public class HistorialMedicoService {
     }
 
 
+
+    /**
+     * Obtiene todos los historiales médicos registrados por un veterinario específico.
+     *
+     * @param usuarioid ID del usuario veterinario.
+     * @return Lista de historiales médicos creados por ese usuario.
+    */
     public List<HistorialMedico> ObtenerSolicitudesPorUsuario(Long usuarioid){
         return historialMedicoRepository.findByUsuarioid(usuarioid);
 
     
     
     }
-
-
-    
-
-
-
-
     
 }

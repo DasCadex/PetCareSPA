@@ -34,19 +34,20 @@ public class HistorialMedicoController {
     @Autowired
     public HistorialMedicoController(HistorialMedicoService historialMedicoService) {
         this.historialMedicoService = historialMedicoService;
-    }
+        }
 
-    @Operation(summary= "Obtener los historiales medicos")
-    @ApiResponses(value = {
-    @ApiResponse(responseCode= "200", description="Historiales encontrados",
-    content= @Content(mediaType= "application/json",
-    schema= @Schema(implementation = HistorialMedico.class)))
-    })
+        @Operation(summary = "Crear un nuevo historial médico")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Historial médico creado exitosamente",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = HistorialMedico.class))),
+    
+        })
 
     @PostMapping
     public ResponseEntity<?> crearHistorialMedico(@RequestBody HistorialMedico historial) {
         try{
-             HistorialMedico savedHistorial = historialMedicoService.crearHistorialMedico(historial);
+            HistorialMedico savedHistorial = historialMedicoService.crearHistorialMedico(historial);
             return ResponseEntity.status(201).body(savedHistorial);
 
         }catch(RuntimeException e){
@@ -57,12 +58,30 @@ public class HistorialMedicoController {
 
         }
 
+        
+        @Operation(summary= "Obtener los historiales médicos")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode= "200", description="Historiales encontrados",
+            content= @Content(mediaType= "application/json",
+            schema= @Schema(implementation = HistorialMedico.class))),
+        @ApiResponse(responseCode= "204", description="No hay historiales disponibles",
+            content= @Content)
+        })
+        
         @GetMapping
         public ResponseEntity<List<HistorialMedico>> obtenerTodosLosHistoriales() {
             List<HistorialMedico> historiales = historialMedicoService.obtenerTodosLosHistoriales();
             return new ResponseEntity<>(historiales, HttpStatus.OK);
         }
 
+        @Operation(summary= "Obtener un historial médico por ID")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode= "200", description="Historial encontrado",
+            content= @Content(mediaType= "application/json",
+            schema= @Schema(implementation = HistorialMedico.class))),
+        @ApiResponse(responseCode= "404", description="Historial no encontrado",
+            content= @Content)
+        })
         @GetMapping("/{idhistorial}")
         public ResponseEntity<HistorialMedico> obtenerHistorialMedicoPorId(@PathVariable Long idhistorial) {
             Optional<HistorialMedico> historial = historialMedicoService.obtenerHistorialMedicoPorId(idhistorial);
@@ -71,7 +90,13 @@ public class HistorialMedicoController {
         }
 
 
-        
+        @Operation(summary= "Eliminar un historial médico por ID")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode= "204", description="Historial eliminado exitosamente",
+            content= @Content),
+        @ApiResponse(responseCode= "404", description="Historial no encontrado",
+            content= @Content)
+        })
 
         @DeleteMapping("/{idhistorial}") // <-- Ajustado la URL para el ID del historial
         public ResponseEntity<Void> eliminarHistorialMedico(@PathVariable Long idhistorial) {
@@ -81,6 +106,16 @@ public class HistorialMedicoController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        @Operation(summary= "Actualizar un historial médico por ID")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode= "200", description="Historial actualizado exitosamente",
+            content= @Content(mediaType= "application/json",
+            schema= @Schema(implementation = HistorialMedico.class))),
+        @ApiResponse(responseCode= "400", description="Historial no encontrado o datos inválidos",
+            content= @Content),
+        @ApiResponse(responseCode= "500", description="Error interno al actualizar el historial",
+            content= @Content)
+        })
         @PutMapping("/{id}")
 
         public  ResponseEntity <?> actualizarHistorial (@PathVariable Long id, @RequestBody  HistorialMedico actualizarHistorial){
@@ -106,14 +141,22 @@ public class HistorialMedicoController {
 
         }
 
-           @GetMapping("/usuario/{usuarioId}")
+        @Operation(summary= "Obtener los historiales médicos por ID de usuario")
+        @ApiResponses(value = {
+        @ApiResponse(responseCode= "200", description="Historiales encontrados",
+            content= @Content(mediaType= "application/json",
+            schema= @Schema(implementation = HistorialMedico.class))),
+        @ApiResponse(responseCode= "204", description="El usuario no tiene historiales médicos",
+            content= @Content)
+        })
+        @GetMapping("/usuario/{usuarioId}")
         public ResponseEntity<List<HistorialMedico>> obtenerSolicitudesPorUsuario(@PathVariable Long usuarioId) {
         List<HistorialMedico> solicitudes = historialMedicoService.ObtenerSolicitudesPorUsuario(usuarioId);
         if (solicitudes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(solicitudes, HttpStatus.OK);
-    }
+        }
 
 
 
