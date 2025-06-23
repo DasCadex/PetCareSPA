@@ -30,7 +30,9 @@ public class SoporteController {
     @Autowired
     private SoporteService solicitudSoporteService;
 
-     @Operation(summary= "Obtener las Solicitudes")
+
+    
+    @Operation(summary= "Obtener las Solicitudes")
     @ApiResponses(value = {
     @ApiResponse(responseCode= "200", description="Solicitudes encontradas",
     content= @Content(mediaType= "application/json",
@@ -44,18 +46,40 @@ public class SoporteController {
         return new ResponseEntity<>(nuevaSolicitud, HttpStatus.CREATED);
     }
 
+
+    @Operation(summary = "Obtener todas las solicitudes de soporte")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Solicitudes encontradas",
+        content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = Soporte.class)))
+    })
     @GetMapping
     public ResponseEntity<List<Soporte>> obtenerTodasLasSolicitudes() {
         List<Soporte> solicitudes = solicitudSoporteService.obtenerTodasLasSolicitudes();
         return new ResponseEntity<>(solicitudes, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Obtener solicitud de soporte por ID")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Solicitud encontrada",
+        content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = Soporte.class))),
+    @ApiResponse(responseCode = "404", description = "Solicitud no encontrada",
+        content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Soporte> obtenerSolicitudPorId(@PathVariable Long id) {
         return solicitudSoporteService.obtenerSolicitudPorId(id)
                 .map(solicitud -> new ResponseEntity<>(solicitud, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    
+    @Operation(summary = "Eliminar solicitud de soporte por ID")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Solicitud eliminada exitosamente"),
+    @ApiResponse(responseCode = "404", description = "Solicitud no encontrada")
+    })
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSolicitud(@PathVariable Long id) {
@@ -67,6 +91,17 @@ public class SoporteController {
         }
     }
 
+
+    @Operation(summary = "Actualizar una solicitud de soporte por ID")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Solicitud actualizada exitosamente",
+        content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = Soporte.class))),
+    @ApiResponse(responseCode = "404", description = "Solicitud no encontrada",
+        content = @Content),
+    @ApiResponse(responseCode = "500", description = "Error interno al actualizar la solicitud",
+        content = @Content)
+    })
     @PutMapping("/{id}")
 
     public ResponseEntity<?> actualizarSoporte(@PathVariable Long id, @RequestBody Soporte actualizarSoporte) {
@@ -92,6 +127,14 @@ public class SoporteController {
         }
     }
 
+    @Operation(summary = "Obtener solicitudes por ID de usuario")
+    @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Solicitudes encontradas",
+        content = @Content(mediaType = "application/json",
+        schema = @Schema(implementation = Soporte.class))),
+    @ApiResponse(responseCode = "204", description = "No se encontraron solicitudes")
+    })
+    
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Soporte>> obtenerSolicitudesPorUsuario(@PathVariable Long usuarioId) {
         List<Soporte> solicitudes = solicitudSoporteService.obtenerSolicitudesPorUsuario(usuarioId);
