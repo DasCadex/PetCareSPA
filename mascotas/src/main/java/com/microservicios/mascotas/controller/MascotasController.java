@@ -1,6 +1,7 @@
 package com.microservicios.mascotas.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,10 @@ public class MascotasController {
         mascotasservice.eliminarMascotas(id);
     }
 
+    // Endpoint para agrupar mascotas por usuarioId
+    @GetMapping("/agrupadas")
+    public Map<Long, List<Mascotas>> obtenerMascotasAgrupadasPorUsuario() {
+        return mascotasservice.agruparPorUsuario();
+    }
     
 }

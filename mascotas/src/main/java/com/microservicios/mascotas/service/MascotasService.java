@@ -2,6 +2,7 @@ package com.microservicios.mascotas.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,5 +58,11 @@ public class MascotasService {
         mascotasRepository.deleteById(id);
     }
 
+
+    public Map<Long, List<Mascotas>> agruparPorUsuario() {
+        return mascotasRepository.findAll().stream()
+                .filter(m -> m.getUsuarioId() != null)
+                .collect(Collectors.groupingBy(Mascotas::getUsuarioId));
+    }
     
 }
