@@ -27,7 +27,7 @@ public class ReservasService {
    }
 
    public Reservas crearReserva(Reservas nuevareserva){
-
+    //antes de crear una reserva verificamos que si el usuario existe 
     Map<String, Object> usuario = usuarioClient.getUsuarioById(nuevareserva.getUsuarioId());
         if (usuario == null || usuario.isEmpty()) {
             throw new RuntimeException("Cliente no encontrado, no puede hacer la reserva ");
@@ -42,11 +42,7 @@ public class ReservasService {
 
 
         return reservaReposiry.save(nuevareserva);
-
-
-        
    }
-
 
     public void  eliminar(long id){
         reservaReposiry.deleteById(id);
@@ -57,6 +53,9 @@ public class ReservasService {
         return reservaReposiry.findById(id).orElse(null);
         //encontrar por id, si no lo encuentra tira null
     }
+    public Map<String, Object> getUsuarioById(Long id) {
+    return usuarioClient.getUsuarioById(id);
+}
     
 
     

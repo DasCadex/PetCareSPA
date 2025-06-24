@@ -25,6 +25,8 @@ public class RoleService {
 
     public Rol buscarPorId (Long id){
         return roleRepositoy.findById(id).orElseThrow(()-> new RuntimeException("Rol no encontrado"));
+
+        
     }
 
 }
